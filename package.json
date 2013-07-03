@@ -7,7 +7,11 @@
     "schema",
     "json"
   ],
-  "author": "Ilya Shaisultanov <ilya.shaisultanov@gmail.com>",
+  "author": {
+    "name": "Ilya Shaisultanov",
+    "email": "ilya.shaisultanov@gmail.com",
+    "url": "http://git.io/ilya"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/diversario/simple-schema.git"
@@ -28,6 +32,7 @@
   "scripts": {
     "test": "make coveralls"
   },
+  "license": "MIT",
   "main": "index",
   "engines": "node >= 0.8.x"
 }
