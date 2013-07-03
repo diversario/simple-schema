@@ -1,6 +1,6 @@
 {
   "name": "simple-schema",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple object validation framework",
   "keywords": [
     "validation",
