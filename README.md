@@ -2,8 +2,8 @@
 
   Simple object validation framework with no dependencies.
 
-  [![Build Status](https://secure.travis-ci.org/diversario/simple-schema.png?branch=master)](http://travis-ci.org/diversario/simple-schema)
-  [![Coverage Status](https://coveralls.io/repos/diversario/simple-schema/badge.png?branch=master)](https://coveralls.io/r/diversario/simple-schema?branch=master)
+  [![Build Status](https://secure.travis-ci.org/diversario/simple-schema.png?branch=develop)](http://travis-ci.org/diversario/simple-schema)
+  [![Coverage Status](https://coveralls.io/repos/diversario/simple-schema/badge.png?branch=develop)](https://coveralls.io/r/diversario/simple-schema?branch=develop)
   [![Dependency Status](https://david-dm.org/diversario/simple-schema.png)](https://david-dm.org/diversario/simple-schema)
   [![NPM version](https://badge.fury.io/js/simple-schema.png)](http://badge.fury.io/js/simple-schema)
 
