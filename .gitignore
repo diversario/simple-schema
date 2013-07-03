@@ -1,0 +1,15 @@
+.project
+.settings
+node_modules
+tools
+npm-debug.log
+logs
+*~
+.DS_*
+atlassian-ide-plugin.xml
+.idea/
+*.log
+*.iml
+lib-cov/
+reports/
+coverage.html
