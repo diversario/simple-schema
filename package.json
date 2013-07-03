@@ -19,13 +19,14 @@
   "bugs": {
     "url": "https://github.com/diversario/simple-schema/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "coveralls": "~2.0.12"
+  },
   "directories": {
     "lib": "./lib"
   },
   "devDependencies": {
     "mocha": "1.x",
-    "coveralls": "~2.0.12",
     "istanbul": "~0.1.36",
     "mocha-istanbul": "~0.2.0"
   },
