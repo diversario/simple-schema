@@ -1,0 +1,33 @@
+{
+  "name": "simple-schema",
+  "version": "0.0.1",
+  "description": "Simple object validation framework",
+  "keywords": [
+    "validation",
+    "schema",
+    "json"
+  ],
+  "author": "Ilya Shaisultanov <ilya.shaisultanov@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/diversario/simple-schema.git"
+  },
+  "bugs": {
+    "url": "https://github.com/diversario/simple-schema/issues"
+  },
+  "dependencies": {},
+  "directories": {
+    "lib": "./lib"
+  },
+  "devDependencies": {
+    "mocha": "1.x",
+    "coveralls": "~2.0.12",
+    "istanbul": "~0.1.36",
+    "mocha-istanbul": "~0.2.0"
+  },
+  "scripts": {
+    "test": "make coveralls"
+  },
+  "main": "index",
+  "engines": "node >= 0.8.x"
+}
