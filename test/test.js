@@ -910,4 +910,43 @@ describe('Simple-schema', function () {
       }))
     })
   })
+  
+  describe('Array introspection', function () {
+    it('validates array elements', function () {
+      var errors
+
+      var schema = {
+        'arr': {
+          'required': true,
+          'type': 'array',
+          'error': {'code': 1, 'message': 'one'}
+        },
+        'arr.prop1': {
+          'required': true,
+          'type': 'string',
+          'error': {'code': 2, 'message': 'two'}
+        },
+        'arr.prop2': {
+          'required': true,
+          'type': 'number',
+          'error': {'code': 3, 'message': 'three'}
+        }
+      }
+
+      errors = validate({
+        arr: [
+          {
+          'prop1': 'yes',
+          'prop2': 2
+          },
+          {
+            'prop1': 'no',
+            'prop2': 5
+          }
+        ]
+      }, schema)
+      assert.equal(errors.length, 0)
+    })
+  })
+
 })
