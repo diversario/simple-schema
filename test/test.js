@@ -930,22 +930,96 @@ describe('Simple-schema', function () {
           'required': true,
           'type': 'number',
           'error': {'code': 3, 'message': 'three'}
+        },
+        'arr.prop3.prop4': {
+          'required': true,
+          'type': 'function',
+          'error': {'code': 4, 'message': 'four'}
         }
       }
 
       errors = validate({
         arr: [
           {
-          'prop1': 'yes',
-          'prop2': 2
+            'prop1': 'yes',
+            'prop2': 2,
+            'prop3': [{
+              'prop4': function(){}
+            }]
           },
           {
             'prop1': 'no',
-            'prop2': 5
+            'prop2': 5,
+            'prop3': [{
+              'prop4': function(){}
+            }]
           }
         ]
       }, schema)
       assert.equal(errors.length, 0)
+    })
+    
+    it('reports errors correctly', function () {
+      var errors
+
+      var schema = {
+        'arr': {
+          'required': true,
+          'type': 'array',
+          'error': {'code': 1, 'message': 'one'}
+        },
+        'arr.prop1': {
+          'required': true,
+          'type': 'string',
+          'error': {'code': 2, 'message': 'two'}
+        },
+        'arr.prop2': {
+          'required': true,
+          'type': 'number',
+          'error': {'code': 3, 'message': 'three'}
+        },
+        'arr.prop3': {
+          'required': true,
+          'type': 'array',
+          'error': {'code': 5, 'message': 'V'}
+        },
+        'arr.prop3.prop4': {
+          'required': true,
+          'type': 'function',
+          'error': {'code': 4, 'message': 'four'}
+        }
+      }
+
+      errors = validate({
+        arr: [
+          {
+            'prop1': 'yes',
+            'prop2': {},
+            'prop3': [{
+              'prop4': function(){}
+            }]
+          },
+          {
+            'prop1': 'no',
+            'prop2': 5,
+            'prop3': [{
+              'prop4': false
+            }]
+          },
+          {
+            'prop1': 'maybe',
+            'prop2': {},
+            'prop3': [{
+              'prop4': false
+            }]
+          }
+        ]
+      }, schema)
+      
+      assert.equal(errors.length, 2)
+      assert(errors.every(function (err) {
+        return [3, 4].indexOf(err.code) !== -1
+      }))      
     })
   })
 
