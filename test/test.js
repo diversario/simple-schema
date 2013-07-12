@@ -959,10 +959,15 @@ describe('Simple-schema', function () {
       assert.equal(errors.length, 0)
     })
     
-    it('reports errors correctly', function () {
+    it.only('reports errors correctly', function () {
       var errors
 
       var schema = {
+        'str': {
+          'required': true,
+          'type': 'string',
+          'error': {'code': 0.5, 'message': 'half'}          
+        },
         'arr': {
           'required': true,
           'type': 'array',
@@ -991,6 +996,7 @@ describe('Simple-schema', function () {
       }
 
       errors = validate({
+        str: 2,
         arr: [
           {
             'prop1': 'yes',
@@ -1016,9 +1022,9 @@ describe('Simple-schema', function () {
         ]
       }, schema)
       
-      assert.equal(errors.length, 2)
+      assert.equal(errors.length, 5)
       assert(errors.every(function (err) {
-        return [3, 4].indexOf(err.code) !== -1
+        return [0.5, 3, 4].indexOf(err.code) !== -1
       }))      
     })
   })
