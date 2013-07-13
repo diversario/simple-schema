@@ -15,7 +15,7 @@ via npm:
 
 ## Usage
 
-Property declarations can specify a property name or a path to a property using dot-notation (`nested.object.prop2`).
+Property declarations can specify a property name or a path to a property using dot-notation (`nested.object.prop2`). If part of the path is an array - validator will treat the rest of the path as elements of objects in that array. E.g., `array.prop1` will validate property `prop1` on every object in array `array`. Nested array are supported as well.
 
 Supported property options:
 
@@ -27,11 +27,23 @@ Supported property options:
   * string length
   * numeric range
   * array length
-* `error`: _Object_ Optional error properties
+* `error`: _Object_ Optional error properties. Validator does not use this property, it's purely for convenience.
   * `code`: _Any_ Error code
   * `message`: _Any_ Error message
 
-Running validation returns an array of errors, e.g. an empty array means success.
+Running validation returns an array of violated rules, as such:
+
+
+```javascript
+[
+    {
+        property: 'prop1',
+        rule: { /* rule as defined in the schema */ }
+    }
+]
+```
+
+ e.g. an empty array means success.
 
 ## Example
 ```javascript
@@ -60,7 +72,7 @@ var myObject = {
   }
 }
 
-// validationResult will hold an array of errors or an empty array
+// validationResult will hold an array of violated rules or an empty array
 var validationResult = validate(schema, myObject)
 assert(validationResult.length === 0) // validation succeeded
 ```
@@ -80,7 +92,7 @@ Coverage report will be in `reports/lcov-report/index.html` file.
 
 ## License 
 
-(The MIT License)
+(The MIT License) 
 
 
 Permission is hereby granted, free of charge, to any person obtaining
@@ -101,3 +113,5 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+© Ilya Shaisultanov, 2013
