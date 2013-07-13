@@ -754,6 +754,46 @@ describe('Simple-schema', function () {
         return [1].indexOf(err.rule.error.code) !== -1
       }))
     })
+    
+    it('supports array of regexps', function () {
+      var errors
+
+      var schema = {
+        'prop1': {
+          'required': true,
+          'type': 'string',
+          'regexp': [/don't/, /fail/],
+          'error': {'code': 1, 'message': 'one'}
+        }
+      }
+
+      errors = validate({
+        'prop1': 'don\'t fail'
+      }, schema)
+      assert.equal(errors.length, 0)
+    })
+    
+    it('if any regexp in array fails - fail validation', function () {
+      var errors
+
+      var schema = {
+        'prop1': {
+          'required': true,
+          'type': 'string',
+          'regexp': [/please/, /fail/],
+          'error': {'code': 1, 'message': 'one'}
+        }
+      }
+
+      errors = validate({
+        'prop1': 'don\'t fail'
+      }, schema)
+      assert.equal(errors.length, 1)
+      
+      assert(errors.every(function (err) {
+        return [1].indexOf(err.rule.error.code) !== -1
+      }))
+    })
   })
   
   
