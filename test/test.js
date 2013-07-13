@@ -241,7 +241,7 @@ describe('Simple-schema', function () {
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, Object.keys(obj).length)
       assert(errors.every(function (err) {
-        return [1,2,3,4,5,6,7,8,9,10].indexOf(err.code) !== -1
+        return [1,2,3,4,5,6,7,8,9,10].indexOf(err.rule.error.code) !== -1
       }))
     })
     
@@ -274,7 +274,7 @@ describe('Simple-schema', function () {
       assert.equal(errors.length, 2)
 
       assert(errors.every(function (err) {
-        return [111,222].indexOf(err.code) !== -1
+        return [111,222].indexOf(err.rule.error.code) !== -1
       }))
     })
   })
@@ -348,8 +348,8 @@ describe('Simple-schema', function () {
   
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 1)
-      assert.strictEqual(errors[0].code, 500)
-      assert.strictEqual(errors[0].message, 'five hundred')
+      assert.strictEqual(errors[0].rule.error.code, 500)
+      assert.strictEqual(errors[0].rule.error.message, 'five hundred')
     })
   
     it('Handles invalid property spec', function () {
@@ -388,8 +388,8 @@ describe('Simple-schema', function () {
   
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 2)
-      assert.strictEqual(errors[0].code, 1)
-      assert.strictEqual(errors[0].message, 'one')
+      assert.strictEqual(errors[0].rule.error.code, 1)
+      assert.strictEqual(errors[0].rule.error.message, 'one')
     })
     
     it('returns error(s) for invalid data object', function () {
@@ -398,74 +398,60 @@ describe('Simple-schema', function () {
       var schema = {
         'startDate': {
           'required': true,
-          'type': ['number', 'date'],
-          'errorCode': 1
+          'type': ['number', 'date']
         },
         'endDate': {
           'required': true,
-          'type': ['number', 'date'],
-          'errorCode': 2
+          'type': ['number', 'date']
         },
         'property': {
           'required': true,
-          'type': ['number', 'date'],
-          'errorCode': 3
+          'type': ['number', 'date']
         }
       }
 
-      errors = validate(undefined, schema)
-      assert.equal(errors.length, 1)
-      assert(errors.every(function (err) {
-        return ['ENODATA'].indexOf(err.code) !== -1
-      }))
+      try {
+        validate(undefined, schema)
+      } catch(e) {
+        assert(e.code == 'ENODATA')
+      }
 
-      errors = validate(null, schema)
-      assert.equal(errors.length, 1)
-      assert(errors.every(function (err) {
-        return ['ENODATA'].indexOf(err.code) !== -1
-      }))
-
+      try {
+        validate(null, schema)
+      } catch(e) {
+        assert(e.code == 'ENODATA')
+      }
+      
       errors = validate({}, schema)
       assert.equal(errors.length, 3)
       assert(errors.every(function (err) {
-        return ['EGENERIC'].indexOf(err.code) !== -1 &&
-               /failed to validate/.test(err.message)
-      }))
-
-      errors = validate([{}], schema)
-      assert.equal(errors.length, 3)
-      assert(errors.every(function (err) {
-        return ['EGENERIC'].indexOf(err.code) !== -1 &&
-               /failed to validate/.test(err.message)
+        return ['property', 'startDate', 'endDate'].indexOf(err.property) !== -1
       }))
 
       errors = validate('', schema)
       assert.equal(errors.length, 3)
       assert(errors.every(function (err) {
-        return ['EGENERIC'].indexOf(err.code) !== -1 &&
-               /failed to validate/.test(err.message)
+        return ['property', 'startDate', 'endDate'].indexOf(err.property) !== -1
       }))
-
+      
       errors = validate(1, schema)
       assert.equal(errors.length, 3)
       assert(errors.every(function (err) {
-        return ['EGENERIC'].indexOf(err.code) !== -1 &&
-               /failed to validate/.test(err.message)
+        return ['property', 'startDate', 'endDate'].indexOf(err.property) !== -1
       }))
-
+      
       errors = validate(function(){}, schema)
       assert.equal(errors.length, 3)
       assert(errors.every(function (err) {
-        return ['EGENERIC'].indexOf(err.code) !== -1 &&
-               /failed to validate/.test(err.message)
+        return ['property', 'startDate', 'endDate'].indexOf(err.property) !== -1
       }))
 
       errors = validate(/a/, schema)
       assert.equal(errors.length, 3)
       assert(errors.every(function (err) {
-        return ['EGENERIC'].indexOf(err.code) !== -1 &&
-               /failed to validate/.test(err.message)
+        return ['property', 'startDate', 'endDate'].indexOf(err.property) !== -1
       }))
+
     })
 
     it('returns error for empty type array', function () {
@@ -481,8 +467,7 @@ describe('Simple-schema', function () {
 
       errors = validate({'prop': true}, schema)
       assert.equal(errors.length, 1)
-      assert.strictEqual(errors[0].code, 1)
-      assert.strictEqual(errors[0].message, '')
+      assert.strictEqual(errors[0].rule.error.code, 1)
     })
 
     it('ignores missing optional properties', function () {
@@ -535,7 +520,7 @@ describe('Simple-schema', function () {
 
       errors = validate({'prop': false}, schema)
       assert.equal(errors.length, 1)
-      assert.strictEqual(errors[0].code, 2)
+      assert.strictEqual(errors[0].rule.error.code, 2)
     })
 
     it('always pass when schema is missing', function () {
@@ -576,8 +561,8 @@ describe('Simple-schema', function () {
 
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 1)
-      assert.strictEqual(errors[0].code, 2)
-      assert.strictEqual(errors[0].message, 'two')
+      assert.strictEqual(errors[0].rule.error.code, 2)
+      assert.strictEqual(errors[0].rule.error.message, 'two')
     })
 
     it('Inline function works with optional properties', function () {
@@ -612,10 +597,10 @@ describe('Simple-schema', function () {
 
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 2)
-      assert.strictEqual(errors[0].code, 1)
-      assert.strictEqual(errors[1].code, 2)
-      assert.strictEqual(errors[0].message, 'one')
-      assert.strictEqual(errors[1].message, 'two')
+      assert.strictEqual(errors[0].rule.error.code, 1)
+      assert.strictEqual(errors[1].rule.error.code, 2)
+      assert.strictEqual(errors[0].rule.error.message, 'one')
+      assert.strictEqual(errors[1].rule.error.message, 'two')
     })
 
     it('Handles function exceptions', function () {
@@ -638,8 +623,8 @@ describe('Simple-schema', function () {
 
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 1)
-      assert.strictEqual(errors[0].code, 1)
-      assert.strictEqual(errors[0].message, 'one')
+      assert.strictEqual(errors[0].rule.error.code, 1)
+      assert.strictEqual(errors[0].rule.error.message, 'one')
     })
 
     it('Support global function reference', function () {
@@ -671,8 +656,8 @@ describe('Simple-schema', function () {
   
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 2)
-      assert.strictEqual(errors[1].code, 2)
-      assert.strictEqual(errors[1].message, 'two')
+      assert.strictEqual(errors[1].rule.error.code, 2)
+      assert.strictEqual(errors[1].rule.error.message, 'two')
       
       delete global[fnName]
     })
@@ -702,10 +687,10 @@ describe('Simple-schema', function () {
 
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 2)
-      assert.strictEqual(errors[0].code, 1)
-      assert.strictEqual(errors[1].code, 2)
-      assert.strictEqual(errors[0].message, 'one')
-      assert.strictEqual(errors[1].message, 'two')
+      assert.strictEqual(errors[0].rule.error.code, 1)
+      assert.strictEqual(errors[1].rule.error.code, 2)
+      assert.strictEqual(errors[0].rule.error.message, 'one')
+      assert.strictEqual(errors[1].rule.error.message, 'two')
 
       delete global[fnName]
     })
@@ -735,10 +720,10 @@ describe('Simple-schema', function () {
 
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 2)
-      assert.strictEqual(errors[0].code, 1)
-      assert.strictEqual(errors[1].code, 2)
-      assert.strictEqual(errors[0].message, 'one')
-      assert.strictEqual(errors[1].message, 'two')
+      assert.strictEqual(errors[0].rule.error.code, 1)
+      assert.strictEqual(errors[1].rule.error.code, 2)
+      assert.strictEqual(errors[0].rule.error.message, 'one')
+      assert.strictEqual(errors[1].rule.error.message, 'two')
 
       delete global[fnName]
     })
@@ -766,7 +751,7 @@ describe('Simple-schema', function () {
       assert.equal(errors.length, 1)
 
       assert(errors.every(function (err) {
-        return [1].indexOf(err.code) !== -1
+        return [1].indexOf(err.rule.error.code) !== -1
       }))
     })
   })
@@ -809,7 +794,7 @@ describe('Simple-schema', function () {
       assert.equal(errors.length, Object.keys(obj).length)
   
       assert(errors.every(function (err) {
-        return [1,2,3].indexOf(err.code) !== -1
+        return [1,2,3].indexOf(err.rule.error.code) !== -1
       }))    
     })
   
@@ -846,7 +831,7 @@ describe('Simple-schema', function () {
       errors = validate(obj, schema)
       assert.equal(errors.length, Object.keys(obj).length)
       assert(errors.every(function (err) {
-        return [1,2,3].indexOf(err.code) !== -1
+        return [1,2,3].indexOf(err.rule.error.code) !== -1
       }))
     })
 
@@ -869,7 +854,7 @@ describe('Simple-schema', function () {
       errors = validate(obj, schema)
       assert.equal(errors.length, Object.keys(obj).length)
       assert(errors.every(function (err) {
-        return [3].indexOf(err.code) !== -1
+        return [3].indexOf(err.rule.error.code) !== -1
       }))
     })
     
@@ -906,7 +891,7 @@ describe('Simple-schema', function () {
       errors = validate(obj, schema)
       assert.equal(errors.length, Object.keys(obj).length)
       assert(errors.every(function (err) {
-        return [1,2,3].indexOf(err.code) !== -1
+        return [1,2,3].indexOf(err.rule.error.code) !== -1
       }))
     })
   })
@@ -959,7 +944,7 @@ describe('Simple-schema', function () {
       assert.equal(errors.length, 0)
     })
     
-    it.only('reports errors correctly', function () {
+    it('reports errors correctly', function () {
       var errors
 
       var schema = {
@@ -988,7 +973,7 @@ describe('Simple-schema', function () {
           'type': 'array',
           'error': {'code': 5, 'message': 'V'}
         },
-        'arr.prop3.prop4': {
+        'arr.prop3.prop4.prop5.prop6': {
           'required': true,
           'type': 'function',
           'error': {'code': 4, 'message': 'four'}
@@ -1009,22 +994,30 @@ describe('Simple-schema', function () {
             'prop1': 'no',
             'prop2': 5,
             'prop3': [{
-              'prop4': false
+              'prop4': {
+                'prop5': [
+                  {'prop6': function(){}}
+                ]
+              }
             }]
           },
           {
             'prop1': 'maybe',
             'prop2': {},
             'prop3': [{
-              'prop4': false
+              'prop4': {
+                'prop5': [
+                  {'prop6': 1}
+                ]
+              }
             }]
           }
         ]
       }, schema)
       
-      assert.equal(errors.length, 5)
+      assert.equal(errors.length, 3)
       assert(errors.every(function (err) {
-        return [0.5, 3, 4].indexOf(err.code) !== -1
+        return [0.5, 3, 4].indexOf(err.rule.error.code) !== -1
       }))      
     })
   })
