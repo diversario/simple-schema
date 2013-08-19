@@ -73,7 +73,7 @@ var myObject = {
 }
 
 // validationResult will hold an array of violated rules or an empty array
-var validationResult = validate(schema, myObject)
+var validationResult = validate(myObject, schema)
 assert(validationResult.length === 0) // validation succeeded
 ```
 
