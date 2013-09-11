@@ -140,6 +140,21 @@ describe('Simple-schema', function () {
       assert.strictEqual(errors.length, 0)
     })
 
+    it('Issue #4: Required fields of type "undefined" are not reported', function () {
+      var errors
+
+      var schema = {
+        'undefined field': {
+          'required': true
+        }
+      }
+
+      var obj = {}
+
+      errors = validate(obj, schema)
+      assert.strictEqual(errors.length, 1)
+    })
+    
     it('Supports multiple types', function () {
       var errors
 
