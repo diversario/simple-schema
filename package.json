@@ -24,15 +24,14 @@
     "lib": "./lib"
   },
   "devDependencies": {
-    "mocha": "1.x",
-    "istanbul": "~0.1.36",
-    "coveralls": "~2.0.12",
+    "mocha": "~1.13.0",
+    "istanbul": "~0.1.44",
+    "coveralls": "~2.3.0",
     "mocha-istanbul": "~0.2.0"
   },
   "scripts": {
     "test": "make coveralls"
   },
   "license": "MIT",
-  "main": "index",
-  "engines": "node >= 0.8.x"
+  "main": "index"
 }
