@@ -788,14 +788,14 @@ describe('Simple-schema', function () {
       assert.equal(errors.length, 0)
     })
     
-    it('if any regexp in array fails - fail validation', function () {
+    it('if any regexp in regexpAll array fails - fail validation', function () {
       var errors
 
       var schema = {
         'prop1': {
           'required': true,
           'type': 'string',
-          'regexp': [/please/, /fail/],
+          'regexpAll': [/please/, /fail/],
           'error': {'code': 1, 'message': 'one'}
         }
       }
@@ -808,6 +808,24 @@ describe('Simple-schema', function () {
       assert(errors.every(function (err) {
         return [1].indexOf(err.rule.error.code) !== -1
       }))
+    })
+
+    it('if at least one regexp in regexpAll array passes - pass validation', function () {
+      var errors
+
+      var schema = {
+        'prop1': {
+          'required': true,
+          'type': 'string',
+          'regexp': [/won't/, /fail/],
+          'error': {'code': 1, 'message': 'one'}
+        }
+      }
+
+      errors = validate({
+        'prop1': 'don\'t fail'
+      }, schema)
+      assert.equal(errors.length, 0)
     })
   })
   
