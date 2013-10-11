@@ -140,7 +140,7 @@ describe('Simple-schema', function () {
       assert.strictEqual(errors.length, 0)
     })
 
-    it('Issue #4: Required fields of type "undefined" are not reported', function () {
+    it('Issue #4: Required fields of type "undefined" are not reported but they should be', function () {
       var errors
 
       var schema = {
@@ -153,6 +153,8 @@ describe('Simple-schema', function () {
 
       errors = validate(obj, schema)
       assert.strictEqual(errors.length, 1)
+      assert(Object.prototype.hasOwnProperty.call(errors[0], 'value'))
+      assert.strictEqual(errors[0].value, undefined)
     })
     
     it('Supports multiple types', function () {
@@ -254,10 +256,22 @@ describe('Simple-schema', function () {
       }
 
       errors = validate(obj, schema)
+      
       assert.strictEqual(errors.length, Object.keys(obj).length)
       assert(errors.every(function (err) {
-        return [1,2,3,4,5,6,7,8,9,10].indexOf(err.rule.error.code) !== -1
+        return [1,2,3,4,5,6,7,8,9,10].indexOf(err.rule.error.code) !== -1 && Object.prototype.hasOwnProperty.call(err, 'value')
       }))
+      
+      assert.strictEqual(errors[0].value, 1)
+      assert.strictEqual(errors[1].value, '42')
+      assert.strictEqual(errors[2].value.toString(), {}.toString())
+      assert.strictEqual(errors[3].value.toString(), [].toString())
+      assert.strictEqual(errors[4].value.constructor.name, 'Date')
+      assert.strictEqual(errors[5].value.toString(), /yay regexp/.toString())
+      assert.strictEqual(errors[6].value, undefined)
+      assert.strictEqual(errors[7].value, false)
+      assert.strictEqual(errors[8].value, null)
+      assert.strictEqual(errors[9].value.toString(), function(){}.toString())
     })
     
     it('detects invalid date', function () {
@@ -327,10 +341,15 @@ describe('Simple-schema', function () {
           'type': 'null',
           'error': {'code': 5, 'message': 'five'}
         },
-        'ERROR.nester.property': {
+        'ERROR.nested.property': {
           'required': true,
           'type': 'string',
           'error': {'code': 500, 'message': 'five hundred'}
+        },
+        'ERROR.another.nested.propertyOfWrongType': {
+          'required': true,
+          'type': 'string',
+          'error': {'code': 600, 'message': 'six hundred'}
         }
       }
   
@@ -357,14 +376,25 @@ describe('Simple-schema', function () {
           }
         },
         'ERROR': {
-          'nested': ['property']
+          'nested': ['property'],
+          'another': {
+            'nested': {
+              'propertyOfWrongType': 123
+            }
+          }
         }
       }
   
       errors = validate(obj, schema)
-      assert.strictEqual(errors.length, 1)
+      assert.strictEqual(errors.length, 2)
+      
       assert.strictEqual(errors[0].rule.error.code, 500)
       assert.strictEqual(errors[0].rule.error.message, 'five hundred')
+      assert.strictEqual(errors[0].value, undefined)
+      
+      assert.strictEqual(errors[1].rule.error.code, 600)
+      assert.strictEqual(errors[1].rule.error.message, 'six hundred')
+      assert.strictEqual(errors[1].value, 123)
     })
   
     it('Handles invalid property spec', function () {
