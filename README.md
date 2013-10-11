@@ -20,7 +20,15 @@ Property declarations can specify a property name or a path to a property using 
 Supported property options:
 
 * `required`: _Boolean_ If this field is required
-* `type`: _String, Array_ A lower*cased constructor name ('object', 'regexp', 'array' etc.) and also 'null' and 'undefined'. Setting this property to an array of values will look for one of the values.
+* `type`: _String, Array_ A lower*cased constructor name, 'null' and 'undefined'. Setting this property to an array of values will look for one of the values. Possible values are:
+    - `object`
+    - `regexp`
+    - `array`
+    - `function`
+    - `string`
+    - `number`
+    - `date`
+    - `boolean`
 * `regexp`: _RegExp_ Regular expression to run on property value. Array of expressions is supported as well and validation will pass if at least one regular expression passes.
 * `regexpAll`: _RegExp_ Regular expression to run on property value. Array of expressions is supported as well and validation will pass only if all expressions pass.
 * `function`: _Function, String_ Function to run with `this` being the object and property name as first argument. This parameter can also be specified as a string if you want to point to a function in the global scope (defined as `global.fn = myFunc`)
@@ -39,6 +47,7 @@ Running validation returns an array of violated rules, as such:
 [
     {
         property: 'prop1',
+        value: 'Value of prop1',
         rule: { /* rule as defined in the schema */ }
     }
 ]
